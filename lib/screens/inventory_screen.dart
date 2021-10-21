@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/models/food_item.dart';
+import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/screens/input_search_screen.dart';
 import 'package:food_waste/widgets/storage_location.dart';
 
@@ -33,7 +33,7 @@ class InventoryScreen extends StatelessWidget {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height*0.7,
+            height: MediaQuery.of(context).size.height - 196.0,
             child: TabBarView(
               children: [
                 StorageLocation(),

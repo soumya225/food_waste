@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/food_item.dart';
-import 'package:food_waste/screens/add_selected_products_screen.dart';
+import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/widgets/food_item_list_item.dart';
 
 
 class InputSearchScreen extends StatelessWidget {
-  const InputSearchScreen({Key? key}) : super(key: key);
+  InputSearchScreen({Key? key}) : super(key: key);
 
     Widget _buildSearchBar(BuildContext context) {
     return Padding(
@@ -53,7 +53,7 @@ class InputSearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Search for products"),
+        title: Text("Search for products")
       ),
       body: SafeArea(
         child: Center(

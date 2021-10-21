@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:food_waste/screens/add_selected_products_screen.dart';
 import 'package:food_waste/screens/home_screen.dart';
 import 'package:food_waste/screens/input_search_screen.dart';
-import 'package:food_waste/screens/inventory_screen.dart';
 import 'package:food_waste/screens/login_screen.dart';
 import 'package:food_waste/screens/register_screen.dart';
+import 'package:food_waste/models/cart.dart';
+import 'package:food_waste/models/inventory.dart';
+import 'package:provider/provider.dart';
+
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Cart()),
+        ChangeNotifierProvider(create: (context) => Inventory()),
+      ],
+      child: MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {

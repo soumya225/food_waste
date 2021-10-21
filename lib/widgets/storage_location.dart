@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/models/food_item.dart';
+import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/widgets/inventory_item_list_item.dart';
 
 class StorageLocation extends StatefulWidget {
@@ -49,8 +49,9 @@ class _StorageLocationState extends State<StorageLocation> {
         ),
         Expanded(
           child: GridView.extent(
+            padding: EdgeInsets.only(bottom: 16.0),
             maxCrossAxisExtent: 200,
-            children: demoFoodItems.map<Widget>((dynamic foodItem) =>
+            children: demoInventoryItems.map<Widget>((dynamic foodItem) =>
                 InventoryItemListItem(foodItem: foodItem,)).toList(),
           ),
         ),

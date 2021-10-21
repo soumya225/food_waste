@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_waste/screens/food_schedule_screen.dart';
 import 'package:food_waste/screens/inventory_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -30,9 +31,7 @@ class HomeScreen extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             InventoryScreen(),
-            Center(
-              child: Text("Schedule"),
-            ),
+            FoodScheduleScreen(),
           ],
         ),
         floatingActionButton: FloatingActionButton(

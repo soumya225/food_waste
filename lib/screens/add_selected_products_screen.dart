@@ -1,31 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/models/food_item.dart';
+import 'package:food_waste/models/cart.dart';
+import 'package:food_waste/models/inventory.dart';
+import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/widgets/selected_product_list_item.dart';
-import 'package:food_waste/screens/inventory_screen.dart';
+import 'package:provider/provider.dart';
 
 
 class AddSelectedProductsScreen extends StatelessWidget {
   const AddSelectedProductsScreen({Key? key}) : super(key: key);
 
   Widget _buildFoodItemsList(BuildContext context) {
-    return Expanded (
-      child: ListView.separated(
-        shrinkWrap: true,
-        itemCount: demoFoodItems.length,
-        itemBuilder: (BuildContext context, int i) {
-          return SelectedProductListItem(foodItem: demoFoodItems[i]);
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-      ),
+    return Consumer<Cart>(
+      builder: (BuildContext context, Cart cart, Widget? child) {
+        return Expanded (
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: cart.foodItems.length,
+            itemBuilder: (BuildContext context, int i) {
+              return SelectedProductListItem(foodItem: cart.foodItems[i]);
+            },
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+          ),
+        );
+      }
     );
   }
 
 
   Widget _buildAddToInventoryButton(BuildContext context) {
+    var cart = context.read<Cart>();
+
     return ElevatedButton(
         onPressed: () {
+          cart.foodItems.forEach((foodItem) {
+            context.read<Inventory>().addToInventory(
+              InventoryItem(
+                name: foodItem.name,
+                description: foodItem.description,
+                expiry:
+              )
+            );
+          });
+
           Navigator.popUntil(context, ModalRoute.withName("/home"));
         },
         child: Text(
