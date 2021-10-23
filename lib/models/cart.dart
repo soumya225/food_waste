@@ -21,4 +21,14 @@ class Cart with ChangeNotifier {
     foodItems.clear();
     notifyListeners();
   }
+
+  void changeExpiryDateOfItem(int index, DateTime d) {
+    foodItems[index].expiry = d;
+    notifyListeners();
+  }
+
+  void changeItemCountOfItem(int index, int i) {
+    foodItems[index].count = i;
+    notifyListeners();
+  }
 }

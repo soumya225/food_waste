@@ -27,8 +27,8 @@ class FoodItemListItem extends StatelessWidget {
         print(cart.foodItems.toString());
       },
       child: ListTile(
-          title: Text(foodItem.name),
-          subtitle: Text(foodItem.description),
+          title: Text(foodItem.description),
+          subtitle: Text(foodItem.foodCategory),
           trailing: isInCart ? Icon(Icons.check_box_rounded) : Icon(Icons.check_box_outline_blank_rounded)
       ),
     );

@@ -17,7 +17,7 @@ class AddSelectedProductsScreen extends StatelessWidget {
             shrinkWrap: true,
             itemCount: cart.foodItems.length,
             itemBuilder: (BuildContext context, int i) {
-              return SelectedProductListItem(foodItem: cart.foodItems[i]);
+              return SelectedProductListItem(foodItem: cart.foodItems[i], index: i);
             },
             separatorBuilder: (context, index) {
               return Divider();
@@ -37,12 +37,16 @@ class AddSelectedProductsScreen extends StatelessWidget {
           cart.foodItems.forEach((foodItem) {
             context.read<Inventory>().addToInventory(
               InventoryItem(
-                name: foodItem.name,
                 description: foodItem.description,
-                expiry:
+                foodCategory: foodItem.foodCategory,
+                expiry: foodItem.expiry,
+                count: foodItem.count,
+                location: foodItem.location
               )
             );
           });
+
+          cart.foodItems.clear();
 
           Navigator.popUntil(context, ModalRoute.withName("/home"));
         },

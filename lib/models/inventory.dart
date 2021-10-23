@@ -15,4 +15,9 @@ class Inventory with ChangeNotifier {
     notifyListeners();
   }
 
+  void changeItemCountOfItem(int index, int i) {
+    inventoryItems[index].count = i;
+    notifyListeners();
+  }
+
 }

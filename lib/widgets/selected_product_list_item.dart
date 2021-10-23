@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 
 class SelectedProductListItem extends StatefulWidget {
   final FoodItem foodItem;
+  final int index;
 
-  SelectedProductListItem({Key? key, required this.foodItem}) : super(key: key);
+  SelectedProductListItem({Key? key, required this.foodItem, required this.index}) : super(key: key);
 
   @override
   State<SelectedProductListItem> createState() =>
@@ -15,45 +16,37 @@ class SelectedProductListItem extends StatefulWidget {
 }
 
 class _SelectedProductListItemState extends State<SelectedProductListItem> {
-  DateTime _current = DateTime.now();
   TextEditingController _dateController = TextEditingController();
-  int itemCount = 1;
 
   @override
   void initState() {
     super.initState();
 
-    _dateController.text = DateFormat.yMd().format(_current);
+    _dateController.text = DateFormat.yMd().format(widget.foodItem.expiry);
   }
 
   void _increaseItemCount() {
-    setState(() {
-      itemCount++;
-    });
+    context.read<Cart>().changeItemCountOfItem(widget.index, widget.foodItem.count + 1);
   }
 
   void _decreaseItemCount() {
-    setState(() {
-      if (itemCount > 1)
-        itemCount--;
-      else {
-        context.read<Cart>().removeFromCart(widget.foodItem);
-        print(context.read<Cart>().foodItems.toString());
-      }
-    });
+    if (widget.foodItem.count > 1) {
+      context.read<Cart>().changeItemCountOfItem(
+          widget.index, widget.foodItem.count - 1);
+    } else {
+      context.read<Cart>().removeFromCart(widget.foodItem);
+    }
   }
 
   _handleDatePicker() async {
     final DateTime? date = await showDatePicker(
         context: context,
-        initialDate: _current,
+        initialDate: widget.foodItem.expiry,
         firstDate: DateTime.now(),
         lastDate: DateTime(2050));
-    if (date != null && date != _current) {
-      setState(() {
-        _current = date;
-      });
-      String formattedDate = DateFormat.yMd().format(_current);
+    if (date != null && date != widget.foodItem.expiry) {
+      context.read<Cart>().changeExpiryDateOfItem(widget.index, date);
+      String formattedDate = DateFormat.yMd().format(widget.foodItem.expiry);
       _dateController.text = formattedDate;
     }
   }
@@ -67,14 +60,14 @@ class _SelectedProductListItemState extends State<SelectedProductListItem> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              widget.foodItem.name,
+              widget.foodItem.description,
               style: Theme.of(context).textTheme.subtitle1,
             ),
             SizedBox(
               height: 8.0,
             ),
             Text(
-              widget.foodItem.description,
+              widget.foodItem.foodCategory,
               style: Theme.of(context).textTheme.subtitle2,
             ),
             SizedBox(
@@ -99,9 +92,9 @@ class _SelectedProductListItemState extends State<SelectedProductListItem> {
               children: [
                 IconButton(
                     onPressed: () => _decreaseItemCount(),
-                    icon: itemCount > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
+                    icon: widget.foodItem.count > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
                 ),
-                Text(itemCount.toString()),
+                Text(widget.foodItem.count.toString()),
                 IconButton(
                     onPressed: () => _increaseItemCount(),
                     icon: Icon(Icons.add_box_rounded)

@@ -1,51 +1,31 @@
+import 'dart:convert';
 import 'package:food_waste/models/storage_locations_enum.dart';
 
 class FoodItem {
-  final String name;
-  final String description;
+  late String description;
+  late String foodCategory;
+  // double proteinValue;
+  // double fatValue;
+  // double carbValue;
   DateTime expiry = DateTime.now();
   var location = StorageLocationEnum.fridge;
-  int amount = 1;
+  int count = 1;
 
-  FoodItem({required this.name, required this.description});
+  static List<FoodItem> fromJson(String jsonString) {
+    final Iterable<dynamic> data = jsonDecode(jsonString)["foods"];
+    return data.map<FoodItem>((dynamic d) => FoodItem()
+      ..description = d["lowercaseDescription"]
+      ..foodCategory = d['foodCategory']
+      // ..proteinValue = data['email']
+      // ..fatValue = data['imageUrl']
+      // ..carbValue = data['imageUrl']
+    ).toList();
+  }
 
   @override
   String toString() {
-    return 'FoodItem{name: $name, description: $description}';
+    return 'FoodItem{description: $description, foodCategory: $foodCategory, expiry: $expiry, location: $location, count: $count}\n';
   }
 }
 
-var demoFoodItems = [
-  FoodItem(
-    name: "Mangoes",
-    description: "7pcs, Priceg",
-  ),
-  FoodItem(
-    name: "Red Apple",
-    description: "1kg, Priceg",
-  ),
-  FoodItem(
-    name: "Bell Pepper Red",
-    description: "1kg, Priceg",
-  ),
-  FoodItem(
-    name: "Ginger",
-    description: "250gm, Priceg",
-  ),
-  FoodItem(
-    name: "Garlic",
-    description: "250gm, Priceg",
-  ),
-  FoodItem(
-    name: "Onions",
-    description: "250gm, Priceg",
-  ),
-  FoodItem(
-    name: "Bananas",
-    description: "250gm, Priceg",
-  ),
-  FoodItem(
-    name: "Tomatoes",
-    description: "250gm, Priceg",
-  ),
-];
+

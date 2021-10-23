@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:food_waste/models/inventory.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:provider/provider.dart';
 
-class InventoryItemListItem extends StatefulWidget {
-  final InventoryItem foodItem;
+class InventoryItemListItem extends StatelessWidget {
+  final InventoryItem item;
+  final int index;
 
-  InventoryItemListItem({Key? key, required this.foodItem}) : super(key: key);
+  InventoryItemListItem({Key? key, required this.item, required this.index}) : super(key: key);
 
-  @override
-  State<InventoryItemListItem> createState() => _InventoryItemListItemState();
-}
-
-class _InventoryItemListItemState extends State<InventoryItemListItem> {
-  int itemCount = 1;
 
   int _daysToExpiry(DateTime from, DateTime to) {
     from = DateTime(from.year, from.month, from.day);
@@ -19,17 +16,17 @@ class _InventoryItemListItemState extends State<InventoryItemListItem> {
     return (to.difference(from).inHours / 24).round();
   }
 
-  void _increaseItemCount() {
-    setState(() {
-      itemCount++;
-    });
+  void _increaseItemCount(BuildContext context) {
+    context.read<Inventory>().changeItemCountOfItem(index, item.count + 1);
   }
 
-  void _decreaseItemCount() {
-    setState(() {
-      if (itemCount > 1)
-        itemCount--;
-    });
+  void _decreaseItemCount(BuildContext context) {
+    if (item.count > 1) {
+      context.read<Inventory>().changeItemCountOfItem(
+          index, item.count - 1);
+    } else {
+      context.read<Inventory>().removeFromInventory(item);
+    }
   }
 
   @override
@@ -38,25 +35,34 @@ class _InventoryItemListItemState extends State<InventoryItemListItem> {
     return Card(
       elevation: 4.0,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ListTile(
-            title: Text(widget.foodItem.name),
-            subtitle: Text(widget.foodItem.description),
+            title: Text(
+              item.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              item.foodCategory,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             alignment: Alignment.centerLeft,
-            child: Text("Expires in ${_daysToExpiry(DateTime.now(), widget.foodItem.expiry)} days"),
+            child: Text("Expires in ${_daysToExpiry(DateTime.now(), item.expiry)} days"),
           ),
           Row(
             children: [
               IconButton(
-                  onPressed: () => _decreaseItemCount(),
-                  icon: itemCount > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
+                  onPressed: () => _decreaseItemCount(context),
+                  icon: item.count > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
               ),
-              Text(itemCount.toString()),
+              Text(item.count.toString()),
               IconButton(
-                  onPressed: () => _increaseItemCount(),
+                  onPressed: () => _increaseItemCount(context),
                   icon: Icon(Icons.add_box_rounded)
               ),
             ],

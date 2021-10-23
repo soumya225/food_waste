@@ -7,9 +7,10 @@ import 'package:food_waste/screens/register_screen.dart';
 import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/models/inventory.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers: [

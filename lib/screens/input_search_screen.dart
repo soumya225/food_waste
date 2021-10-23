@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/food_item.dart';
-import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/api_service.dart';
 import 'package:food_waste/widgets/food_item_list_item.dart';
 
 
-class InputSearchScreen extends StatelessWidget {
+class InputSearchScreen extends StatefulWidget {
   InputSearchScreen({Key? key}) : super(key: key);
 
-    Widget _buildSearchBar(BuildContext context) {
+  @override
+  State<InputSearchScreen> createState() => _InputSearchScreenState();
+}
+
+class _InputSearchScreenState extends State<InputSearchScreen> {
+  final textController = TextEditingController();
+
+
+
+  Widget _buildSearchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         keyboardType: TextInputType.text,
+        controller: textController,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search_rounded),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ElevatedButton(
+              child: Icon(Icons.search_rounded),
+              onPressed: () => {
+                setState(() {})
+              },
+            ),
+          ),
           hintText: "Search",
           border: OutlineInputBorder()
         ),
@@ -22,20 +40,39 @@ class InputSearchScreen extends StatelessWidget {
   }
 
   Widget _buildFoodItemsList(BuildContext context) {
-      return Expanded (
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: demoFoodItems.length,
-          itemBuilder: (BuildContext context, int i) {
-            return FoodItemListItem(foodItem: demoFoodItems[i]);
-          },
-          separatorBuilder: (context, index) {
-            return Divider();
-          },
-        ),
-      );
+    return textController.text.isEmpty ? Text("Search for food items") : FutureBuilder<dynamic>(
+      future: ApiService().fetchFoods(textController.text),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if(snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Oh no! Error! ${snapshot.error}');
+          }
+          if (!snapshot.hasData) {
+            return const Text('No foods found');
+          }
+          final List<FoodItem> foods = FoodItem.fromJson(snapshot.data.body);
+          final List<Widget> foodTiles = foods.map<Widget>((FoodItem f) => FoodItemListItem(foodItem: f)).toList();
+          return Expanded (
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: foodTiles.length,
+              itemBuilder: (BuildContext context, int i) {
+                return foodTiles[i];
+              },
+              separatorBuilder: (context, index) {
+                return Divider();
+              },
+            ),
+          );
+        }
+        else {
+          return CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.secondary,
+          );
+        }
+      },
+    );
   }
-
 
   Widget _buildSelectProductsButton(BuildContext context) {
     return ElevatedButton(
@@ -60,6 +97,7 @@ class InputSearchScreen extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column (
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildSearchBar(context),
                 _buildFoodItemsList(context),
