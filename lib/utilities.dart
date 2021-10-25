@@ -1,0 +1,1 @@
+List<String> storageLocations = ["fridge", "freezer", "pantry"];

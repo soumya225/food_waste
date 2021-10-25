@@ -14,8 +14,6 @@ class InputSearchScreen extends StatefulWidget {
 class _InputSearchScreenState extends State<InputSearchScreen> {
   final textController = TextEditingController();
 
-
-
   Widget _buildSearchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -45,12 +43,30 @@ class _InputSearchScreenState extends State<InputSearchScreen> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return Text('Oh no! Error! ${snapshot.error}');
+            print(snapshot.error);
+            return Column(
+              children: [
+                Container(
+                  height: 136,
+                  width: 136,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                      "assets/images/cancel.png",
+                      width: 136,
+                      fit: BoxFit.contain
+                  ),
+                ),
+                Text('Oh no! Something went wrong! Please try again.'),
+              ],
+            );
           }
           if (!snapshot.hasData) {
             return const Text('No foods found');
           }
           final List<FoodItem> foods = FoodItem.fromJson(snapshot.data.body);
+          if(foods.isEmpty) {
+            return const Text('No foods found');
+          }
           final List<Widget> foodTiles = foods.map<Widget>((FoodItem f) => FoodItemListItem(foodItem: f)).toList();
           return Expanded (
             child: ListView.separated(

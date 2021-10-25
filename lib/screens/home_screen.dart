@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/screens/food_schedule_screen.dart';
 import 'package:food_waste/screens/inventory_screen.dart';
+import 'package:food_waste/services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -13,6 +14,16 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Home"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.exit_to_app_rounded),
+              tooltip: "Logout",
+              onPressed: () {
+                AuthService().signOut();
+                Navigator.pushReplacementNamed(context, "/login");
+              }
+            ),
+          ],
         ),
         bottomNavigationBar: Container(
           color: Theme.of(context).colorScheme.primary,

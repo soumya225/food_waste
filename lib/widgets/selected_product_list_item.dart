@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/models/food_item.dart';
+import 'package:food_waste/utilities.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +9,9 @@ class SelectedProductListItem extends StatefulWidget {
   final FoodItem foodItem;
   final int index;
 
-  SelectedProductListItem({Key? key, required this.foodItem, required this.index}) : super(key: key);
+  SelectedProductListItem(
+      {Key? key, required this.foodItem, required this.index})
+      : super(key: key);
 
   @override
   State<SelectedProductListItem> createState() =>
@@ -17,6 +20,7 @@ class SelectedProductListItem extends StatefulWidget {
 
 class _SelectedProductListItemState extends State<SelectedProductListItem> {
   TextEditingController _dateController = TextEditingController();
+
 
   @override
   void initState() {
@@ -31,8 +35,7 @@ class _SelectedProductListItemState extends State<SelectedProductListItem> {
 
   void _decreaseItemCount() {
     if (widget.foodItem.count > 1) {
-      context.read<Cart>().changeItemCountOfItem(
-          widget.index, widget.foodItem.count - 1);
+      context.read<Cart>().changeItemCountOfItem(widget.index, widget.foodItem.count - 1);
     } else {
       context.read<Cart>().removeFromCart(widget.foodItem);
     }
@@ -70,35 +73,56 @@ class _SelectedProductListItemState extends State<SelectedProductListItem> {
               widget.foodItem.foodCategory,
               style: Theme.of(context).textTheme.subtitle2,
             ),
-            SizedBox(
-              height: 16.0,
-            ),
             Form(
-              child: TextFormField(
-                readOnly: true,
-                controller: _dateController,
-                onTap: _handleDatePicker,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a date';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                    labelText: "Expiry Date", border: OutlineInputBorder()),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: widget.foodItem.location,
+                    items: storageLocations
+                        .map((e) => DropdownMenuItem<String>(
+                              child: Text(e.toString()),
+                              value: e,
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                        context.read<Cart>().changeStorageLocationOfItem(widget.index, value!);
+                    },
+                    decoration: InputDecoration(
+                        labelText: "Storage location", border: OutlineInputBorder()),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    controller: _dateController,
+                    onTap: _handleDatePicker,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a date';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: "Expiry Date", border: OutlineInputBorder()),
+                  ),
+                ],
               ),
             ),
             Row(
               children: [
                 IconButton(
                     onPressed: () => _decreaseItemCount(),
-                    icon: widget.foodItem.count > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
-                ),
+                    icon: widget.foodItem.count > 1
+                        ? Icon(Icons.indeterminate_check_box_rounded)
+                        : Icon(Icons.delete_rounded)),
                 Text(widget.foodItem.count.toString()),
                 IconButton(
                     onPressed: () => _increaseItemCount(),
-                    icon: Icon(Icons.add_box_rounded)
-                ),
+                    icon: Icon(Icons.add_box_rounded)),
               ],
             )
           ],

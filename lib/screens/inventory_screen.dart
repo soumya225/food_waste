@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/screens/input_search_screen.dart';
+import 'package:food_waste/utilities.dart';
 import 'package:food_waste/widgets/storage_location.dart';
 
 class InventoryScreen extends StatelessWidget {
@@ -18,16 +19,16 @@ class InventoryScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               tabs: [
                 Tab(
-                  text: "All",
+                  text: "all",
                 ),
                 Tab(
-                  text: "Fridge",
+                  text: storageLocations[0],
                 ),
                 Tab(
-                  text: "Freezer",
+                  text: storageLocations[1],
                 ),
                 Tab(
-                  text: "Pantry",
+                  text: storageLocations[2],
                 ),
               ],
             ),
@@ -36,10 +37,10 @@ class InventoryScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height - 196.0,
             child: TabBarView(
               children: [
-                StorageLocation(),
-                Icon(Icons.directions_transit),
-                Icon(Icons.directions_bike),
-                Icon(Icons.directions_boat),
+                StorageLocation(location: null),
+                StorageLocation(location: storageLocations[0]),
+                StorageLocation(location: storageLocations[1]),
+                StorageLocation(location: storageLocations[2]),
               ],
             ),
           )

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/screens/login_screen.dart';
+import 'package:food_waste/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 
 class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  RegisterScreen({Key? key}) : super(key: key);
+
+  GlobalKey<FormState> _key = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _reenteredPasswordController = TextEditingController();
 
   Widget _buildImage(BuildContext context) {
     return Container(
@@ -20,13 +26,22 @@ class RegisterScreen extends StatelessWidget {
   Widget _buildEmailTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
+        controller: _emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
             labelText: "Email",
             hintText: "Enter your email",
             border: OutlineInputBorder()
         ),
+        validator: (String? val) {
+          if (val == null || val.isEmpty)
+            return "Email address should not be empty";
+          else if (!RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+').hasMatch(val)) {
+            return "Invalid email address";
+          }
+          return null;
+        },
       ),
     );
   }
@@ -34,13 +49,20 @@ class RegisterScreen extends StatelessWidget {
   Widget _buildPasswordTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
+        controller: _passwordController,
         obscureText: true,
         decoration: InputDecoration(
             labelText: "Password",
             hintText: "Enter your password",
             border: OutlineInputBorder()
         ),
+        validator: (String? val) {
+          if(val != null && val.length < 6) {
+            return "Password should be at least 6 characters";
+          }
+          return null;
+        },
       ),
     );
   }
@@ -48,20 +70,43 @@ class RegisterScreen extends StatelessWidget {
   Widget _buildConfirmPasswordTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
+        controller: _reenteredPasswordController,
         obscureText: true,
         decoration: InputDecoration(
             labelText: "Confirm password",
             hintText: "Re-enter your password",
             border: OutlineInputBorder()
         ),
+        validator: (String? val) {
+          if(val != _passwordController.text) {
+            return "Passwords do not match";
+          }
+          return null;
+        },
       ),
     );
   }
 
   Widget _buildRegisterButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => {},
+      onPressed: () async {
+        if(_key.currentState!.validate()) {
+          bool emailsExists = await AuthService().emailAlreadyExists(_emailController.text);
+          if(emailsExists) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email already taken.")));
+            return;
+          }
+          bool isRegistrationSuccessful = await AuthService().registerAccount(_emailController.text, _passwordController.text);
+
+          if(isRegistrationSuccessful) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registration successful! Please log in")));
+            Navigator.pushReplacementNamed(context, "/login");
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error registering. Please try again")));
+          }
+        }
+      },
       child: Text(
         "Register",
         style: Theme.of(context).textTheme.button,
@@ -83,7 +128,7 @@ class RegisterScreen extends StatelessWidget {
           ),
           TextButton(
               onPressed: () => {
-                Navigator.pushReplacementNamed(context, "/")
+                Navigator.pushReplacementNamed(context, "/login")
               },
               child: Text(
                 "Login",
@@ -103,17 +148,21 @@ class RegisterScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Center(
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            children: [
-              _buildImage(context),
-              _buildEmailTextField(context),
-              _buildPasswordTextField(context),
-              _buildConfirmPasswordTextField(context),
-              _buildRegisterButton(context),
-              _buildLoginButton(context)
-            ],
+          child: Form(
+            key: _key,
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              children: [
+                _buildImage(context),
+                _buildEmailTextField(context),
+                _buildPasswordTextField(context),
+                _buildConfirmPasswordTextField(context),
+                _buildRegisterButton(context),
+                _buildLoginButton(context)
+              ],
+            ),
+
           ),
         ),
       ),

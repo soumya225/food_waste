@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:food_waste/models/storage_locations_enum.dart';
+import 'package:food_waste/utilities.dart';
 
 class FoodItem {
   late String description;
@@ -8,7 +8,7 @@ class FoodItem {
   // double fatValue;
   // double carbValue;
   DateTime expiry = DateTime.now();
-  var location = StorageLocationEnum.fridge;
+  String location = storageLocations[0];
   int count = 1;
 
   static List<FoodItem> fromJson(String jsonString) {

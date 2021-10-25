@@ -27,6 +27,11 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void changeStorageLocationOfItem(int index, String s) {
+    foodItems[index].location = s;
+    notifyListeners();
+  }
+
   void changeItemCountOfItem(int index, int i) {
     foodItems[index].count = i;
     notifyListeners();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/cart.dart';
-import 'package:food_waste/models/inventory.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/database_service.dart';
 import 'package:food_waste/widgets/selected_product_list_item.dart';
 import 'package:provider/provider.dart';
 
@@ -34,17 +34,19 @@ class AddSelectedProductsScreen extends StatelessWidget {
 
     return ElevatedButton(
         onPressed: () {
-          cart.foodItems.forEach((foodItem) {
-            context.read<Inventory>().addToInventory(
-              InventoryItem(
+          cart.foodItems.forEach((foodItem) async {
+            InventoryItem newItem = InventoryItem(
                 description: foodItem.description,
                 foodCategory: foodItem.foodCategory,
                 expiry: foodItem.expiry,
                 count: foodItem.count,
                 location: foodItem.location
-              )
             );
+
+            await DatabaseService().addItemToInventory(newItem);
           });
+
+          print(cart.foodItems);
 
           cart.foodItems.clear();
 

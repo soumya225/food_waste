@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/screens/inventory_screen.dart';
-import 'package:food_waste/screens/register_screen.dart';
+import 'package:food_waste/services/auth_service.dart';
 
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
+
+  GlobalKey<FormState> _key = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   
   Widget _buildImage(BuildContext context) {
     return Container(
@@ -22,7 +25,8 @@ class LoginScreen extends StatelessWidget {
   Widget _buildEmailTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
+        controller: _emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: "Email",
@@ -36,8 +40,9 @@ class LoginScreen extends StatelessWidget {
   Widget _buildPasswordTextField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
         obscureText: true,
+        controller: _passwordController,
         decoration: InputDecoration(
           labelText: "Password",
           hintText: "Enter your password",
@@ -49,11 +54,15 @@ class LoginScreen extends StatelessWidget {
   
   Widget _buildLoginButton(BuildContext context) {
     return ElevatedButton(
-        onPressed: () => {
-          Navigator.pushReplacementNamed(context, "/home")
+        onPressed: () async {
+          bool isLoginSuccessful = await AuthService().signInWithEmailAndPassword(_emailController.text, _passwordController.text);
+
+          isLoginSuccessful ?
+            Navigator.pushReplacementNamed(context, "/home") :
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error logging in. Please try again")));
         },
         child: Text(
-          "Login",
+          "Log in",
           style: Theme.of(context).textTheme.button,
         )
     );
@@ -72,8 +81,8 @@ class LoginScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle2,
           ),
           TextButton(
-            onPressed: () => {
-              Navigator.pushReplacementNamed(context, "/register")
+            onPressed: () async {
+              Navigator.pushReplacementNamed(context, "/register");
             },
             child: Text(
               "Register",
@@ -93,16 +102,19 @@ class LoginScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Center(
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            children: [
-              _buildImage(context),
-              _buildEmailTextField(context),
-              _buildPasswordTextField(context),
-              _buildLoginButton(context),
-              _buildRegisterButton(context)
-            ],
+          child: Form (
+            key: _key,
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              children: [
+                _buildImage(context),
+                _buildEmailTextField(context),
+                _buildPasswordTextField(context),
+                _buildLoginButton(context),
+                _buildRegisterButton(context)
+              ],
+            ),
           ),
         ),
       ),

@@ -24,7 +24,6 @@ class FoodItemListItem extends StatelessWidget {
         } else {
           cart.addToCart(foodItem);
         }
-        print(cart.foodItems.toString());
       },
       child: ListTile(
           title: Text(foodItem.description),

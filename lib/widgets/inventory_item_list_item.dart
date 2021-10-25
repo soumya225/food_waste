@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/models/inventory.dart';
 import 'package:food_waste/models/inventory_item.dart';
-import 'package:provider/provider.dart';
+import 'package:food_waste/services/database_service.dart';
 
 class InventoryItemListItem extends StatelessWidget {
   final InventoryItem item;
@@ -17,15 +16,16 @@ class InventoryItemListItem extends StatelessWidget {
   }
 
   void _increaseItemCount(BuildContext context) {
-    context.read<Inventory>().changeItemCountOfItem(index, item.count + 1);
+    item.count += 1;
+    DatabaseService().updateInventoryItem(item);
   }
 
   void _decreaseItemCount(BuildContext context) {
     if (item.count > 1) {
-      context.read<Inventory>().changeItemCountOfItem(
-          index, item.count - 1);
+      item.count -= 1;
+      DatabaseService().updateInventoryItem(item);
     } else {
-      context.read<Inventory>().removeFromInventory(item);
+      DatabaseService().deleteInventoryItem(item);
     }
   }
 

@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_waste/screens/add_selected_products_screen.dart';
 import 'package:food_waste/screens/home_screen.dart';
@@ -5,25 +7,26 @@ import 'package:food_waste/screens/input_search_screen.dart';
 import 'package:food_waste/screens/login_screen.dart';
 import 'package:food_waste/screens/register_screen.dart';
 import 'package:food_waste/models/cart.dart';
-import 'package:food_waste/models/inventory.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await dotenv.load(fileName: ".env");
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Cart()),
-        ChangeNotifierProvider(create: (context) => Inventory()),
       ],
-      child: MyApp(),
+      child: MyApp()
     )
   );
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -93,9 +96,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: "/",
+      initialRoute: FirebaseAuth.instance.currentUser == null ? "/login" : "/home",
       routes: {
-        "/": (BuildContext ctx) => LoginScreen(),
+        "/login": (BuildContext ctx) => LoginScreen(),
         "/register": (BuildContext ctx) => RegisterScreen(),
         "/home": (BuildContext ctx) => HomeScreen(),
         "/input_search": (BuildContext ctx) => InputSearchScreen(),
