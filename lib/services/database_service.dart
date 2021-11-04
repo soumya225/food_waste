@@ -32,7 +32,10 @@ class DatabaseService {
       "foodCategory": item.foodCategory,
       "location": item.location,
       "count": item.count,
-      "expiry": item.expiry
+      "expiry": item.expiry,
+      "proteinValue": item.proteinValue,
+      "fatValue": item.fatValue,
+      "carbValue": item.carbValue
     }).catchError((e) => print(e));
   }
 
@@ -53,11 +56,15 @@ class DatabaseService {
 
     snapshot.docs.forEach((doc) {
       items.add(InventoryItem(
-          description: doc.get("description"),
-          foodCategory: doc.get("foodCategory"),
-          location: doc.get("location"),
-          count: doc.get("count"),
-          expiry: doc.get("expiry").toDate()));
+        description: doc.get("description"),
+        foodCategory: doc.get("foodCategory"),
+        location: doc.get("location"),
+        count: doc.get("count"),
+        expiry: doc.get("expiry").toDate(),
+        proteinValue: doc.get("proteinValue"),
+        carbValue: doc.get("carbValue"),
+        fatValue: doc.get("fatValue")
+      ));
     });
 
     return items;

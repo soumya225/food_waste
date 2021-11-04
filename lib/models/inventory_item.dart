@@ -5,8 +5,18 @@ class InventoryItem {
   final String description;
   final String foodCategory;
   final DateTime expiry;
+  final double proteinValue;
+  final double carbValue;
+  final double fatValue;
   var location;
   int count;
 
-  InventoryItem({required this.description, required this.foodCategory, required this.expiry, required this.location, required this.count});
+  InventoryItem({required this.description,
+    required this.foodCategory,
+    required this.expiry,
+    required this.proteinValue,
+    required this.carbValue,
+    required this.fatValue,
+    this.location,
+    required this.count});
 }

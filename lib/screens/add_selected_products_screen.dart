@@ -40,7 +40,10 @@ class AddSelectedProductsScreen extends StatelessWidget {
                 foodCategory: foodItem.foodCategory,
                 expiry: foodItem.expiry,
                 count: foodItem.count,
-                location: foodItem.location
+                location: foodItem.location,
+                proteinValue: foodItem.proteinValue,
+                carbValue: foodItem.carbValue,
+                fatValue: foodItem.fatValue
             );
 
             await DatabaseService().addItemToInventory(newItem);
