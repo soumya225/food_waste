@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class FoodScheduleListItem extends StatelessWidget {
   final DateTime day;
-  final Map<String, String> suggestedItems;
+  final Map<String, dynamic> suggestedItems;
   
   const FoodScheduleListItem({Key? key, required this.day, required this.suggestedItems}) : super(key: key);
 

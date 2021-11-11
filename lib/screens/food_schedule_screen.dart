@@ -1,48 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/schedule_service.dart';
 import 'package:food_waste/widgets/food_schedule_list_item.dart';
+import 'package:provider/provider.dart';
 
-class FoodScheduleScreen extends StatelessWidget {
+class FoodScheduleScreen extends StatefulWidget {
   FoodScheduleScreen({Key? key}) : super(key: key);
 
-  int dayOffset = -1;
+  @override
+  State<FoodScheduleScreen> createState() => _FoodScheduleScreenState();
+}
 
-  List<Map<String, String>> suggestedItemsForEachDay = [
-    {
-      "onions": "100g",
-      "tomatoes": "200g",
-      "potatoes": "150g"
-    },
-    {
-      "bread": "100g",
-      "apples": "200g",
-      "avocados": "150g"
-    },
-    {
-      "onions": "100g",
-      "tomatoes": "200g",
-      "potatoes": "150g"
-    },
-  ];
+class _FoodScheduleScreenState extends State<FoodScheduleScreen> {
+  bool isLoading = true;
+  List<FoodScheduleListItem> schedule = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _buildSchedule(context);
+  }
+
+  void _buildSchedule(BuildContext context) async {
+    List<InventoryItem> inventoryItems = [];
+    Provider.of<List<InventoryItem>>(context, listen: false).forEach((element) {
+      inventoryItems.add(InventoryItem(
+          description: element.description,
+          foodCategory: element.foodCategory,
+          expiry: element.expiry,
+          proteinValue: element.proteinValue,
+          carbValue: element.carbValue,
+          fatValue: element.fatValue,
+          count: element.count)
+      );
+    });
+
+    for (int d = 0; d < 3; d++) {
+      var day = await ScheduleService().calculateDay(inventoryItems);
+      var item = FoodScheduleListItem(
+          day: DateTime.now().add(Duration(days: d)), suggestedItems: day);
+      item.suggestedItems.removeWhere((key, value) => value == 0.0);
+      if (item.suggestedItems.isNotEmpty) {
+        schedule.add(item);
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        break;
+      }
+      setState(() {
+        isLoading = false;
+        inventoryItems.forEach((element) {
+          if (item.suggestedItems.containsKey(element.description)) {
+            element.count -= item.suggestedItems[element.description] as int;
+          }
+        });
+        inventoryItems.removeWhere((element) => element.count == 0);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: suggestedItemsForEachDay.length,
-          itemBuilder: (BuildContext context, int i) {
-            dayOffset++;
-            return FoodScheduleListItem(
-                day: DateTime.now().add(Duration(days: dayOffset)),
-                suggestedItems: suggestedItemsForEachDay[i]
-            );
-          },
-        ),
-      ),
-    );
+    return isLoading
+        ? Center(
+          child: SizedBox (
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+          ),
+        )
+        : schedule.length <= 0
+            ? Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                      "assets/images/empty.png",
+                      width: 136,
+                      fit: BoxFit.contain
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    "Not enough food items in inventory to develop a schedule. Please add more.",
+                  ),
+                ],
+              ),
+            )
+            : Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: schedule.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return schedule[i];
+                    },
+                  ),
+                ),
+              );
   }
 }

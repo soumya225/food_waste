@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/services/database_service.dart';
 
+import 'package:food_waste/utilities.dart';
+
 class InventoryItemListItem extends StatelessWidget {
   final InventoryItem item;
   final int index;
 
   InventoryItemListItem({Key? key, required this.item, required this.index}) : super(key: key);
-
-
-  int _daysToExpiry(DateTime from, DateTime to) {
-    from = DateTime(from.year, from.month, from.day);
-    to = DateTime(to.year, to.month, to.day);
-    return (to.difference(from).inHours / 24).round();
-  }
 
   void _increaseItemCount(BuildContext context) {
     item.count += 1;
@@ -52,7 +47,7 @@ class InventoryItemListItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             alignment: Alignment.centerLeft,
-            child: Text("Expires in ${_daysToExpiry(DateTime.now(), item.expiry)} days"),
+            child: Text("Expires in ${daysToExpiry(DateTime.now(), item.expiry)} days"),
           ),
           Row(
             children: [

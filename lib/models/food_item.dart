@@ -22,11 +22,11 @@ class FoodItem {
 
       nutrients.forEach((element) {
         if(element["nutrientId"] == 1003) {
-          newItem.proteinValue = element["value"];
+          newItem.proteinValue =  element["value"].toDouble();
         } else if (element["nutrientId"] == 1004) {
-          newItem.fatValue = element["value"];
+          newItem.fatValue = element["value"].toDouble();
         } else if (element["nutrientId"] == 1005) {
-          newItem.carbValue = element["value"];
+          newItem.carbValue = element["value"].toDouble();
         }
       });
 
