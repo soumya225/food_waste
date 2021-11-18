@@ -15,7 +15,7 @@ class ScheduleService {
   ScheduleService._internal();
 
   Future<dynamic> calculateDay(List<InventoryItem> items) async {
-    String url = Uri.encodeFull('http://8e9f-197-157-115-202.ngrok.io/schedule');
+    String url = Uri.encodeFull('https://food-expiry-tracker.herokuapp.com/schedule');
 
     List jsonList = [];
 

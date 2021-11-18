@@ -36,6 +36,10 @@ class _FoodScheduleScreenState extends State<FoodScheduleScreen> {
     });
 
     for (int d = 0; d < 3; d++) {
+      if(inventoryItems.isEmpty){
+        isLoading = false;
+        break;
+      }
       var day = await ScheduleService().calculateDay(inventoryItems);
       var item = FoodScheduleListItem(
           day: DateTime.now().add(Duration(days: d)), suggestedItems: day);

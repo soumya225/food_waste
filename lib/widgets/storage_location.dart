@@ -10,7 +10,6 @@ class StorageLocation extends StatelessWidget {
 
   List<InventoryItemListItem> _buildGridItems(BuildContext context) {
     List<InventoryItemListItem> gridItems = [];
-    // final inventoryItems = context.read<Inventory>().inventoryItems;
     final inventoryItems = Provider.of<List<InventoryItem>>(context);
     for(int i = 0; i < inventoryItems.length; i++) {
       InventoryItemListItem inventoryItem = InventoryItemListItem(

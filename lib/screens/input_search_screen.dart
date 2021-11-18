@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/models/food_item.dart';
 import 'package:food_waste/services/api_service.dart';
 import 'package:food_waste/widgets/food_item_list_item.dart';
+import 'package:provider/provider.dart';
 
 
 class InputSearchScreen extends StatefulWidget {
@@ -44,20 +46,21 @@ class _InputSearchScreenState extends State<InputSearchScreen> {
         if(snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
             print(snapshot.error);
-            return Column(
-              children: [
-                Container(
-                  height: 136,
-                  width: 136,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                      "assets/images/cancel.png",
-                      width: 136,
-                      fit: BoxFit.contain
+            return Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                        "assets/images/cancel.png",
+                        fit: BoxFit.contain
+                    ),
                   ),
-                ),
-                Text('Oh no! Something went wrong! Please try again.'),
-              ],
+                  Text('Oh no! Something went wrong! Please try again.'),
+                ],
+              ),
             );
           }
           if (!snapshot.hasData) {
@@ -92,8 +95,13 @@ class _InputSearchScreenState extends State<InputSearchScreen> {
 
   Widget _buildSelectProductsButton(BuildContext context) {
     return ElevatedButton(
-        onPressed: () => {
-          Navigator.pushNamed(context, "/add_selected_products")
+        onPressed: () {
+          var cart = context.read<Cart>();
+          if(cart.foodItems.length > 0) {
+            Navigator.pushNamed(context, "/add_selected_products");
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("No items selected. Please select at least one item or go back to inventory.")));
+          }
         },
         child: Text(
           "Select products",

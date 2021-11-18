@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
 
 class DatabaseService {
@@ -83,22 +84,39 @@ class DatabaseService {
         .catchError((e) => print(e));
   }
 
-  Future<void> updateInventoryItem(InventoryItem item) {
+  Future<void> updateInventoryItem(InventoryItem item, {DateTime? newExpiry}) {
     if (FirebaseAuth.instance.currentUser == null) {
       throw Exception("User is not logged in");
     }
+    
+    
+    String id = _uniqueDocumentID(item);
 
-    return inventoriesCollection
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection("user_inventory")
-        .doc(_uniqueDocumentID(item))
-        .update(<String, dynamic>{
-      "description": item.description,
-      "foodCategory": item.foodCategory,
-      "location": item.location,
-      "count": item.count,
-      "expiry": item.expiry
-    }).catchError((e) => print(e));
+    if(newExpiry == null) {
+      return inventoriesCollection
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("user_inventory")
+          .doc(id)
+          .update(<String, dynamic>{
+        "description": item.description,
+        "foodCategory": item.foodCategory,
+        "location": item.location,
+        "count": item.count,
+        "expiry": item.expiry
+      }).catchError((e) => print(e));
+    } else {
+      deleteInventoryItem(item);
+      return addItemToInventory(InventoryItem(
+        description: item.description,
+        foodCategory: item.foodCategory,
+        expiry: newExpiry,
+        location: item.location,
+        count: item.count,
+        proteinValue: item.proteinValue,
+        fatValue: item.fatValue,
+        carbValue: item.carbValue
+      ));
+    }
   }
 
 }

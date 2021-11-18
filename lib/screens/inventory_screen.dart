@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_waste/models/inventory_item.dart';
-import 'package:food_waste/screens/input_search_screen.dart';
 import 'package:food_waste/utilities.dart';
 import 'package:food_waste/widgets/storage_location.dart';
 

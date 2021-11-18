@@ -4,7 +4,7 @@ import 'package:food_waste/widgets/storage_location.dart';
 class InventoryItem {
   final String description;
   final String foodCategory;
-  final DateTime expiry;
+  DateTime expiry;
   final double proteinValue;
   final double carbValue;
   final double fatValue;

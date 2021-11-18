@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/connectivity_service.dart';
 import 'package:food_waste/services/database_service.dart';
+import 'package:food_waste/widgets/network_detection_wrapper.dart';
 import 'package:food_waste/widgets/selected_product_list_item.dart';
 import 'package:provider/provider.dart';
-
 
 class AddSelectedProductsScreen extends StatelessWidget {
   const AddSelectedProductsScreen({Key? key}) : super(key: key);
 
   Widget _buildFoodItemsList(BuildContext context) {
     return Consumer<Cart>(
-      builder: (BuildContext context, Cart cart, Widget? child) {
-        return Expanded (
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: cart.foodItems.length,
-            itemBuilder: (BuildContext context, int i) {
-              return SelectedProductListItem(foodItem: cart.foodItems[i], index: i);
-            },
-            separatorBuilder: (context, index) {
-              return Divider();
-            },
-          ),
-        );
-      }
-    );
+        builder: (BuildContext context, Cart cart, Widget? child) {
+      return Expanded(
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemCount: cart.foodItems.length,
+          itemBuilder: (BuildContext context, int i) {
+            return SelectedProductListItem(
+                foodItem: cart.foodItems[i], index: i);
+          },
+          separatorBuilder: (context, index) {
+            return Divider();
+          },
+        ),
+      );
+    });
   }
-
 
   Widget _buildAddToInventoryButton(BuildContext context) {
     var cart = context.read<Cart>();
@@ -43,8 +43,7 @@ class AddSelectedProductsScreen extends StatelessWidget {
                 location: foodItem.location,
                 proteinValue: foodItem.proteinValue,
                 carbValue: foodItem.carbValue,
-                fatValue: foodItem.fatValue
-            );
+                fatValue: foodItem.fatValue);
 
             await DatabaseService().addItemToInventory(newItem);
           });
@@ -58,8 +57,7 @@ class AddSelectedProductsScreen extends StatelessWidget {
         child: Text(
           "Add products to inventory",
           style: Theme.of(context).textTheme.button,
-        )
-    );
+        ));
   }
 
   @override
@@ -69,14 +67,18 @@ class AddSelectedProductsScreen extends StatelessWidget {
         title: Text("Add selected products"),
       ),
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-            child: Column (
-              children: [
-                _buildFoodItemsList(context),
-                _buildAddToInventoryButton(context),
-              ],
+        child: Consumer<ConnectivityService>(
+          builder: (context, service, widget) => NetworkDetection(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                child: Column(
+                  children: [
+                    _buildFoodItemsList(context),
+                    _buildAddToInventoryButton(context),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
