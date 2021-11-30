@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/analytics_service.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -48,6 +49,7 @@ class DatabaseService {
     return inventoriesCollection
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("user_inventory")
+        .orderBy("expiry")
         .snapshots()
         .map(_inventoryItemsFromSnapshot);
   }
@@ -84,12 +86,11 @@ class DatabaseService {
         .catchError((e) => print(e));
   }
 
-  Future<void> updateInventoryItem(InventoryItem item, {DateTime? newExpiry}) {
+  Future<void> updateInventoryItem(InventoryItem item, {DateTime? newExpiry}) async {
     if (FirebaseAuth.instance.currentUser == null) {
       throw Exception("User is not logged in");
     }
-    
-    
+
     String id = _uniqueDocumentID(item);
 
     if(newExpiry == null) {
@@ -105,7 +106,7 @@ class DatabaseService {
         "expiry": item.expiry
       }).catchError((e) => print(e));
     } else {
-      deleteInventoryItem(item);
+      await deleteInventoryItem(item);
       return addItemToInventory(InventoryItem(
         description: item.description,
         foodCategory: item.foodCategory,

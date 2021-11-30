@@ -10,10 +10,9 @@ import 'package:food_waste/screens/register_screen.dart';
 import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/services/connectivity_service.dart';
 import 'package:food_waste/services/notification_service.dart';
-import 'package:food_waste/utilities.dart';
-import 'package:food_waste/widgets/network_detection_wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:food_waste/services/analytics_service.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,62 +20,61 @@ Future main() async {
   await dotenv.load(fileName: ".env");
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => Cart()),
-        ChangeNotifierProvider(create: (context) => ConnectivityService())
-      ],
-      child: MyApp()
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => Cart()),
+          ChangeNotifierProvider(create: (context) {
+            ConnectivityService connectivityService = ConnectivityService();
+            connectivityService.initialLoad();
+            return connectivityService;
+          }),
+        ],
+        child: MyApp()
     )
   );
 }
 
 class MyApp extends StatelessWidget {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
 
   @override
   Widget build(BuildContext context) {
+    final observer = AnalyticsService().getAnalyticsObserver();
+
     final pushNotificationService = PushNotificationService(_firebaseMessaging);
     pushNotificationService.initialise();
 
-    return Provider<ConnectivityStatus>(
-      create: (context) => ConnectivityService().connectionStatus,
-      child: MaterialApp(
+    return MaterialApp(
         title: 'Butler',
         debugShowCheckedModeBanner: false,
+        navigatorObservers: <NavigatorObserver>[
+          observer
+        ],
         theme: ThemeData(
           elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Color(0xFFf9aa33))
-            )
-          ),
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Color(0xFFf9aa33)))),
           tabBarTheme: TabBarTheme(
             labelColor: Color(0xFFf9aa33),
             indicator: BoxDecoration(
-              border: Border.all(
-                color: Color(0xFFf9aa33),
-                width: 2.0
-              )
-            ),
+                border: Border.all(color: Color(0xFFf9aa33), width: 2.0)),
           ),
           colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: MaterialColor(
-                Color(0xFF344955).value,
-                {
-                  50: Color(0xFFe8f0f6),
-                  100: Color(0xFFcbd9e1),
-                  200: Color(0xFFadc0cb),
-                  300: Color(0xFF8da6b5),
-                  400: Color(0xFF7592a3),
-                  500: Color(0xFF5d7f92),
-                  600: Color(0xFF517081),
-                  700: Color(0xFF425c6a),
-                  800: Color(0xFF344955),
-                  900: Color(0xFF23343e),
-                }
-              ),
-            accentColor: Color(0xFFf9aa33)
-          ),
+              primarySwatch: MaterialColor(Color(0xFF344955).value, {
+                50: Color(0xFFe8f0f6),
+                100: Color(0xFFcbd9e1),
+                200: Color(0xFFadc0cb),
+                300: Color(0xFF8da6b5),
+                400: Color(0xFF7592a3),
+                500: Color(0xFF5d7f92),
+                600: Color(0xFF517081),
+                700: Color(0xFF425c6a),
+                800: Color(0xFF344955),
+                900: Color(0xFF23343e),
+              }),
+              accentColor: Color(0xFFf9aa33)),
           textTheme: TextTheme(
             headline6: TextStyle(
               fontFamily: "Raleway",
@@ -85,6 +83,7 @@ class MyApp extends StatelessWidget {
             ),
             subtitle1: TextStyle(
               fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
             subtitle2: TextStyle(
@@ -94,7 +93,6 @@ class MyApp extends StatelessWidget {
             ),
             bodyText1: TextStyle(
               fontFamily: "Raleway",
-              fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
             bodyText2: TextStyle(
@@ -108,16 +106,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        initialRoute: FirebaseAuth.instance.currentUser == null ? "/login" : "/home",
+        initialRoute:
+            FirebaseAuth.instance.currentUser == null ? "/login" : "/home",
         routes: {
           "/login": (BuildContext ctx) => LoginScreen(),
           "/register": (BuildContext ctx) => RegisterScreen(),
           "/home": (BuildContext ctx) => HomeScreen(),
           "/input_search": (BuildContext ctx) => InputSearchScreen(),
-          "/add_selected_products": (BuildContext ctx) => AddSelectedProductsScreen(),
-        }
-      ),
-    );
+          "/add_selected_products": (BuildContext ctx) =>
+              AddSelectedProductsScreen(),
+        });
   }
 }
-

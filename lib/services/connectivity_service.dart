@@ -4,7 +4,7 @@ import 'package:food_waste/utilities.dart';
 
 
 class ConnectivityService with ChangeNotifier {
-  ConnectivityStatus connectionStatus = ConnectivityStatus.WiFi;
+  ConnectivityStatus connectionStatus = ConnectivityStatus.Loading;
 
   ConnectivityService() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -12,6 +12,11 @@ class ConnectivityService with ChangeNotifier {
       connectionStatus = _getStatusFromResult(result);
       notifyListeners();
     });
+  }
+
+  void initialLoad() async {
+    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
+    connectionStatus = _getStatusFromResult(connectivityResult);
   }
 
   ConnectivityStatus _getStatusFromResult(ConnectivityResult result) {

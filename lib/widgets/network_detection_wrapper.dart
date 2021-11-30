@@ -11,7 +11,18 @@ class NetworkDetection extends StatelessWidget {
   Widget build(BuildContext context) {
     var connection = context.read<ConnectivityService>();
     print("============ Connection status: ${connection.connectionStatus}");
-    if (connection.connectionStatus == ConnectivityStatus.Offline) {
+    if (connection.connectionStatus == ConnectivityStatus.Loading) {
+      return Center(
+          child: SizedBox (
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+      );
+    }
+    else if (connection.connectionStatus == ConnectivityStatus.Offline) {
       return SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

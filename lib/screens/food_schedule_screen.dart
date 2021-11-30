@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/analytics_service.dart';
 import 'package:food_waste/services/schedule_service.dart';
 import 'package:food_waste/widgets/food_schedule_list_item.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class _FoodScheduleScreenState extends State<FoodScheduleScreen> {
   void initState() {
     super.initState();
     _buildSchedule(context);
+    AnalyticsService().viewedSchedule();
   }
 
   void _buildSchedule(BuildContext context) async {
@@ -77,24 +79,23 @@ class _FoodScheduleScreenState extends State<FoodScheduleScreen> {
           ),
         )
         : schedule.length <= 0
-            ? Padding(
+            ? ListView(
               padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                      "assets/images/empty.png",
-                      width: 136,
-                      fit: BoxFit.contain
-                  ),
-                  SizedBox(
-                    height: 32,
-                  ),
-                  Text(
+              children: [
+                Image.asset(
+                  "assets/images/empty.png",
+                  fit: BoxFit.contain
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                Center(
+                  child: Text(
                     "Not enough food items in inventory to develop a schedule. Please add more.",
+                    style: Theme.of(context).textTheme.bodyText2,
                   ),
-                ],
-              ),
+                ),
+              ],
             )
             : Center(
                 child: Padding(

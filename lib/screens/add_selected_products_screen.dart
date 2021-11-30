@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/cart.dart';
 import 'package:food_waste/models/inventory_item.dart';
+import 'package:food_waste/services/analytics_service.dart';
 import 'package:food_waste/services/connectivity_service.dart';
 import 'package:food_waste/services/database_service.dart';
 import 'package:food_waste/widgets/network_detection_wrapper.dart';
@@ -46,6 +47,7 @@ class AddSelectedProductsScreen extends StatelessWidget {
                 fatValue: foodItem.fatValue);
 
             await DatabaseService().addItemToInventory(newItem);
+            await AnalyticsService().addedFoodItem();
           });
 
           print(cart.foodItems);

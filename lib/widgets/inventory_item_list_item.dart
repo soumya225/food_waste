@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_waste/models/inventory_item.dart';
 import 'package:food_waste/screens/item_details.dart';
+import 'package:food_waste/services/analytics_service.dart';
 import 'package:food_waste/services/database_service.dart';
 
 import 'package:food_waste/utilities.dart';
@@ -22,6 +23,7 @@ class InventoryItemListItem extends StatelessWidget {
       DatabaseService().updateInventoryItem(item);
     } else {
       DatabaseService().deleteInventoryItem(item);
+      AnalyticsService().deletedFoodItem();
     }
   }
 
@@ -30,7 +32,7 @@ class InventoryItemListItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ItemDetails(item: item)),
         );
@@ -67,7 +69,18 @@ class InventoryItemListItem extends StatelessWidget {
                     onPressed: () => _decreaseItemCount(context),
                     icon: item.count > 1 ? Icon(Icons.indeterminate_check_box_rounded) : Icon(Icons.delete_rounded)
                 ),
-                Text(item.count.toString()),
+                Column(
+                  children: [
+                    Text(
+                      item.count.toString(),
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    Text(
+                      "${item.count}00g",
+                      style: Theme.of(context).textTheme.bodyText2,
+                    )
+                  ],
+                ),
                 IconButton(
                     onPressed: () => _increaseItemCount(context),
                     icon: Icon(Icons.add_box_rounded)

@@ -119,7 +119,18 @@ class _SelectedProductListItemState extends State<SelectedProductListItem> {
                     icon: widget.foodItem.count > 1
                         ? Icon(Icons.indeterminate_check_box_rounded)
                         : Icon(Icons.delete_rounded)),
-                Text(widget.foodItem.count.toString()),
+                Column(
+                  children: [
+                    Text(
+                      widget.foodItem.count.toString(),
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    Text(
+                      "${widget.foodItem.count}00g",
+                      style: Theme.of(context).textTheme.bodyText2,
+                    )
+                  ],
+                ),
                 IconButton(
                     onPressed: () => _increaseItemCount(),
                     icon: Icon(Icons.add_box_rounded)),

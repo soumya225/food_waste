@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:food_waste/services/analytics_service.dart';
 
 class AuthService  {
   static final AuthService _instance = AuthService._internal();
+  final AnalyticsService _analyticsService = AnalyticsService();
 
   factory AuthService() {
     return _instance;
@@ -24,10 +26,12 @@ class AuthService  {
 
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      var userCredentials = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      await _analyticsService.setUserProperties(userID: userCredentials.user!.uid);
+      await _analyticsService.logLogin();
     } on FirebaseAuthException catch (e) {
       print(e);
       return false;
@@ -37,8 +41,9 @@ class AuthService  {
 
   Future<bool> registerAccount(String email, String password) async {
     try {
-      var credential = await FirebaseAuth.instance
+      var userCredentials = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      await _analyticsService.setUserProperties(userID: userCredentials.user!.uid);
     } on FirebaseAuthException catch (e) {
       print(e);
       return false;

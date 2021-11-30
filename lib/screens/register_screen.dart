@@ -15,9 +15,10 @@ class RegisterScreen extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     return Container(
       height: 128,
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: Image.asset("assets/images/cooking.png",
-          width: 128, fit: BoxFit.contain),
+        fit: BoxFit.contain
+      ),
     );
   }
 

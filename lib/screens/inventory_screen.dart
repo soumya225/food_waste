@@ -15,6 +15,7 @@ class InventoryScreen extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             child: TabBar(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
+              labelStyle: Theme.of(context).textTheme.subtitle2,
               tabs: [
                 Tab(
                   text: "all",

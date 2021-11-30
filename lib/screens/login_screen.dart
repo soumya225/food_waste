@@ -14,10 +14,10 @@ class LoginScreen extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     return Container(
       height: 136,
-      width: 136,
       padding: const EdgeInsets.all(8.0),
       child: Image.asset("assets/images/healthy_options.png",
-          width: 136, fit: BoxFit.contain),
+        fit: BoxFit.contain
+      ),
     );
   }
 

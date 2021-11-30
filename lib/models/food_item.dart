@@ -2,16 +2,23 @@ import 'dart:convert';
 import 'package:food_waste/utilities.dart';
 
 class FoodItem {
+  DateTime now = DateTime.now();
+
   late String description;
   late String foodCategory;
   late double proteinValue;
   late double fatValue;
   late double carbValue;
-  DateTime expiry = DateTime.now();
+  late DateTime expiry;
   String location = storageLocations[0];
   int count = 1;
 
+  FoodItem() {
+    expiry = now.subtract(Duration(microseconds: now.microsecond));
+  }
+
   static List<FoodItem> fromJson(String jsonString) {
+
     final Iterable<dynamic> data = jsonDecode(jsonString)["foods"];
     return data.map<FoodItem>((dynamic d) {
       FoodItem newItem = FoodItem()

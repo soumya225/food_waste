@@ -29,7 +29,7 @@ class _ItemDetailsState extends State<ItemDetails> {
         initialDate: widget.item.expiry,
         firstDate: DateTime.now().difference(widget.item.expiry).inDays < 0 ? DateTime.now() : widget.item.expiry,
         lastDate: DateTime(2050));
-    if (date != null) {
+    if (date != null && date != widget.item.expiry) {
       DatabaseService().updateInventoryItem(widget.item, newExpiry: date);
       String formattedDate = DateFormat.yMd().format(date);
       _dateController.text = formattedDate;
@@ -43,7 +43,7 @@ class _ItemDetailsState extends State<ItemDetails> {
         title: Text("Item details"),
         leading: IconButton(
           icon: Icon(Icons.check),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
         ),
       ),
       body: SafeArea(
@@ -71,6 +71,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                   .toList(),
               onChanged: (value) {
                 widget.item.location = value;
+                DatabaseService().updateInventoryItem(widget.item);
               },
               decoration: InputDecoration(
                   labelText: "Storage location", border: OutlineInputBorder()),

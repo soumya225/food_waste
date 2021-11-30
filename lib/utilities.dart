@@ -1,6 +1,7 @@
 List<String> storageLocations = ["fridge", "freezer", "pantry"];
 
 enum ConnectivityStatus {
+  Loading,
   WiFi,
   Cellular,
   Offline

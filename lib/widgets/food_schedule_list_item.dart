@@ -11,7 +11,7 @@ class FoodScheduleListItem extends StatelessWidget {
     StringBuffer sb = StringBuffer();
 
     suggestedItems.forEach((key, value) {
-      sb.write("• $key: $value \n");
+      sb.write("• $key: ${value}00g \n");
     });
 
     return Text(
