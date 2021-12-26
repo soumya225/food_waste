@@ -24,9 +24,38 @@ class HomeScreen extends StatelessWidget {
                 title: Text("Home"),
                 actions: [
                   IconButton(
-                    icon: Icon(Icons.help_rounded),
-                    tooltip: "Help",
+                    icon: Icon(Icons.info_rounded),
+                    tooltip: "About",
                     onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                        builder: (BuildContext buildContext) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: ListView(
+                              children: [
+                                Text(
+                                  "Welcome to the Butler app!",
+                                  style: Theme.of(context).textTheme.subtitle2,
+                                ),
+                                Text(
+                                    """
+                                                                        
+Butler aims to help you keep track of the foods you have at home and to help you plan when to use those foods.
+To get started, add food items to your inventory. Once you have added enough products, you’ll be able to view an automatically generated food schedule that will suggest what to consume today, tomorrow, and the day after tomorrow.
+
+The source of data for the food items is USDA FoodData Central :
+U.S. Department of Agriculture, Agricultural Research Service. FoodData Central, 2019. fdc.nal.usda.gov.
+
+©2021 Soumya Satheesan""",
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      );
                     }
                   ),
                   IconButton(

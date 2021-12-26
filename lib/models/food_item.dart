@@ -13,7 +13,7 @@ class FoodItem {
   String location = storageLocations[0];
   int count = 1;
 
-  FoodItem() {
+  FoodItem._() {
     expiry = now.subtract(Duration(microseconds: now.microsecond));
   }
 
@@ -21,7 +21,7 @@ class FoodItem {
 
     final Iterable<dynamic> data = jsonDecode(jsonString)["foods"];
     return data.map<FoodItem>((dynamic d) {
-      FoodItem newItem = FoodItem()
+      FoodItem newItem = FoodItem._()
         ..description = d["lowercaseDescription"]
         ..foodCategory = d["foodCategory"];
 
