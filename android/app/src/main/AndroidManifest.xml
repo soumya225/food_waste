@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.food_waste">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="Butler"
         android:icon="@mipmap/ic_launcher">
