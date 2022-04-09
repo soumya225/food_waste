@@ -6,6 +6,12 @@ Currently, the application is limited to only Android users.
 
 Note that the API developed for this application can be found at https://github.com/soumya225/food_waste_backend. 
 
+Demo:
+</br>
+<img src="https://github.com/soumya225/food_waste/blob/main/Demo%20Video.gif" alt="demo" width="400"/>
+
+Some screenshots:
+</br>
 ![image](https://user-images.githubusercontent.com/25707177/161376205-8b758ef6-6a90-4987-b55a-efcc9b4998a0.png)
 ![image](https://user-images.githubusercontent.com/25707177/161376218-df5c904d-dcd9-44b0-8141-6d0eedfa0bcc.png)
 
